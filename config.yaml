@@ -8,9 +8,6 @@ requirements:
   - optimum == 1.17.0
   - accelerate == 0.27.2
   - scipy == 1.10.1
-  - pydub == 0.25.1
-  - numpy == 1.26.4
-  - encodec == 0.1.1
   - https://github.com/Dao-AILab/flash-attention/releases/download/v2.5.3/flash_attn-2.5.3+cu122torch2.1cxx11abiFALSE-cp311-cp311-linux_x86_64.whl
 model_cache:
   - repo_id: suno/bark-small
