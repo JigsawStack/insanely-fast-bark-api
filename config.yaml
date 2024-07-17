@@ -16,7 +16,6 @@ model_cache:
   - repo_id: suno/bark-small
     allow_patterns:
       - "*.bin"
-      # - "*.npy"
       - "*.pt"
 resources:
   accelerator: A10G
