@@ -1,7 +1,6 @@
 import torch
 from transformers import BarkModel
 from transformers import AutoProcessor
-from optimum.bettertransformer import BetterTransformer
 import scipy
 import base64
 import io
@@ -16,11 +15,12 @@ class Model:
         self.processor = None
 
     def load(self):
-        model = BarkModel.from_pretrained(
-            "suno/bark-small", torch_dtype=torch.float16
-        ).to("cuda:0")
 
-        model = BetterTransformer.transform(model, keep_original_model=False)
+        model = BarkModel.from_pretrained(
+            "suno/bark-small",
+            torch_dtype=torch.float16,
+            attn_implementation="flash_attention_2",
+        ).to("cuda:0")
 
         model.enable_cpu_offload()
 
@@ -33,9 +33,6 @@ class Model:
         voice = request.get("voice") or "v2/en_speaker_1"
         # batch_size = request.get("batch_size") or 1
         inputs = self.processor(prompt, voice_preset=voice).to("cuda:0")
-
-        print(inputs)
-
         output = self._model.generate(**inputs)
 
         #      do_sample=True,
@@ -53,7 +50,6 @@ def arr_to_b64(arr, sample_rate):
     bytes_wav = bytes()
     byte_io = io.BytesIO(bytes_wav)
     scipy.io.wavfile.write(byte_io, sample_rate, arr)
-    byte_io.seek(0)
     wav_bytes = byte_io.read()
     audio_data = base64.b64encode(wav_bytes).decode("UTF-8")
     return audio_data
