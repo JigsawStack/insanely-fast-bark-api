@@ -4,6 +4,7 @@ from transformers import AutoProcessor
 import scipy
 import base64
 import io
+import numpy as np
 
 
 class Model:
@@ -25,25 +26,29 @@ class Model:
         model.enable_cpu_offload()
 
         self._model = model
-
         self.processor = AutoProcessor.from_pretrained("suno/bark-small")
 
     def predict(self, request: dict):
         prompt = request.get("prompt")
         voice = request.get("voice") or "v2/en_speaker_1"
-        # batch_size = request.get("batch_size") or 1
         inputs = self.processor(prompt, voice_preset=voice).to("cuda:0")
         output = self._model.generate(**inputs)
 
-        #      do_sample=True,
+        #  do_sample=True,
         # fine_temperature=0.4,
         # coarse_temperature=0.8,
-        # batch_size=batch_size
 
         audio_array = output.cpu().numpy().squeeze()
+        # https://github.com/suno-ai/bark/issues/478#issuecomment-1858425847, float16 requires adjustment to the audio array which is float32 by default
+        audio_array /= 1.414
+        audio_array *= 32767
+        audio_array = audio_array.astype(np.int16)
+
         sample_rate = self._model.generation_config.sample_rate
         audio = arr_to_b64(audio_array, sample_rate)
-        return {"data": audio, "sample_rate": sample_rate}
+        return {
+            "data": audio,
+        }
 
 
 def arr_to_b64(arr, sample_rate):
