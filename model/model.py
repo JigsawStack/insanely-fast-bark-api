@@ -39,12 +39,13 @@ class Model:
         do_sample = request.get("do_sample") or None
         fine_temperature = request.get("fine_temperature") or None
         coarse_temperature = request.get("coarse_temperature") or None
-        batch_chunk_size = request.get("batch_chunk_size") or 17
+        batch_chunk_size = (
+            request.get("batch_chunk_size") or 17
+        )  # chunk sentences by 17 words (<=~13 of audio) since bark can only generate 13 seconds of audio at a time
 
         sample_rate = self._model.generation_config.sample_rate
 
         promptWords = prompt.split()
-        # chunk sentences by 17 words (<=~13 of audio) since bark can only generate 13 seconds of audio at a time
         chunksList = list(chunks(promptWords, batch_chunk_size))
         sentences = [" ".join(chunk) for chunk in chunksList]
         print("sentences", sentences)
@@ -63,7 +64,7 @@ class Model:
 
         for outputChunk in output:
             single_audio = outputChunk.cpu().numpy().squeeze()
-            # remove 1 seconds of silence from the end of the audio
+            # remove 1 seconds of silence from the end of the audio clip
             single_audio = single_audio[: -1 * sample_rate]
             audio_array += [single_audio]
 
