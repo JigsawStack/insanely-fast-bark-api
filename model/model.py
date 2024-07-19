@@ -62,7 +62,10 @@ class Model:
         audio_array = []
 
         for outputChunk in output:
-            audio_array += [outputChunk.cpu().numpy().squeeze()]
+            single_audio = outputChunk.cpu().numpy().squeeze()
+            # remove 1 seconds of silence from the end of the audio
+            single_audio = single_audio[: -1 * sample_rate]
+            audio_array += [single_audio]
 
         audio_array = np.concatenate(audio_array)
 
@@ -74,6 +77,7 @@ class Model:
         audio = arr_to_b64(audio_array, sample_rate)
         return {
             "data": audio,
+            "sentences": sentences,
         }
 
 
