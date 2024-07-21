@@ -36,7 +36,7 @@ class Model:
             request.get("voice") or "v2/en_speaker_1"
         )  # https://huggingface.co/suno/bark/tree/main/speaker_embeddings/v2
 
-        do_sample = request.get("do_sample") or None
+        do_sample = request.get("do_sample") or True
         fine_temperature = request.get("fine_temperature") or None
         coarse_temperature = request.get("coarse_temperature") or None
         batch_chunk_size = (
