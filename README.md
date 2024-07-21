@@ -83,6 +83,10 @@ The model uses `suno/bark-small` which offers additional speed-up with the trade
 Bark is a highly experimental model and is still in the research phase. The quality of the audio generated may not be perfect and may contain artifacts and noise.
 - Bark works great with shorter sentences around 13s (~17 words) of audio for reduced artifacts and noise. Longer audio may contain more blank noise and spaces between sentences.
 
+Voice cloning was specifically not built into bark due to safety and privacy concerns. However here are some examples of projects that managed to do it (we're open to PRs to add this feature):
+- https://colab.research.google.com/github/KevinWang676/Bark-Voice-Cloning/blob/main/Bark_Voice_Cloning.ipynb#scrollTo=kwiJronKqYMv
+- https://huggingface.co/spaces/kevinwang676/Bark-with-Voice-Cloning
+  
 ## Acknowledgements
 
 1. [Yoach Lacombe](https://huggingface.co/ylacombe) for writing a great tutorial on how to optimize bark with transformers and flash.
